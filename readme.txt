@@ -141,3 +141,71 @@ git reset --hard 747ea1a
 先通过git reflog查看历来所有日志时间戳
 然后再git reset --hard 9f5f18b
 
+----------------------------------------------------------------------------------------
+
+一个项目在开发过程中，可能会有多个团队在进行同时开发，团队之间不能相互影响，还要在最后实现功能的合并，
+这时就需要通过分支进行多个团队之间的并发修改！
+
+分支是什么？是当前代码/切出时的镜像（所有的分支修改，相当于都是在同一镜像上进行操作）
+
+默认所有的操作都是基于一个主分支进行（命名为master）
+这个主分支master我们不建议对其进行修改和删除，相当于是代码仓库的主干，所有版本发布都是通过在主分支上打标签来完成的！
+所有的功能扩展/子分支，最终开发完毕后，都应该要合并到主分支master！
+
+查看仓库中的所有分支
+git branch
+* 绿色表示的是当前分支
+
+下面模拟两个团队，一个用来扩展新功能，一个用来修复bugs
+这时项目经理，就应该在当前主干master上切出两个子分支
+
+创建/切出/复制（就是当前分支的镜像）
+git branch new_feature
+
+重命名分支
+git branch -m new_feature qrcode_pay
+
+删除分支
+git branch -d qrcode_pay
+git branch --delete fix_bugs
+
+同时删除多个分支
+git branch -d b1 b2
+
+注意：
+1、无法删除正在使用的分支
+2、如果分支已经有过提交（已经commit新内容到仓库），但是尚未和任何其他合并，一般也不能直接删除
+    但是可以通过git branch -D fix_bugs强制删除（但是不期望这个做）
+
+检出分支（切换到另一个分支上开发）
+git checkout new_feature
+
+可以在创建分支的同时检出该分支
+git checkout -b b2 = git branch b2 + git checkout b2
+
+合并分支（将fix_bugs合并到master）
+1、先检出master
+git checkout master
+2、再合并fix_bugs
+git merge fix_bugs
+
+重点：合并冲突的处理
+原因：两个分支（new_feature/fix_bugs或者new_feature/master或者fix_bugs/master）修改了同一行代码，在合并时就会冲突！
+
+通过git status查看合并时产生冲突的文件
+both modified:   package.json
+both modified:   a.htm
+both modified:   style.css
+
+发生冲突只要修改产生冲突的文件，去掉冲突行的标识，和前面产生冲突的代码的作者协商，改为一致的结果！
+重新add，再commit即可！
+
+技巧：
+在多个子分支都要和主分支合并时，你如果不想解决分支合并时的冲突，那么你确保自己是第一个执行合并的人！
+
+
+
+
+
+
+
